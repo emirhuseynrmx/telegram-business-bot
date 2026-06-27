@@ -15,6 +15,8 @@ Built for practical business workflows: collect leads, answer common questions, 
 - `/status ORDER_ID` order/status response stub
 - `/export_leads` admin-only lead export
 - CSV lead storage for simple handoff
+- Pydantic validation for names, email addresses, and message length
+- export summary with latest lead timestamp
 - `.env.example` for deployment settings
 - tested service layer with no Telegram network calls
 

@@ -4,15 +4,15 @@ import csv
 from datetime import datetime, timezone
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, ValidationError
 
 
 class Lead(BaseModel):
     model_config = ConfigDict(frozen=True, str_strip_whitespace=True)
 
-    name: str
+    name: str = Field(min_length=2)
     email: EmailStr
-    message: str
+    message: str = Field(min_length=3, max_length=1000)
     created_at: datetime
 
     def to_row(self) -> dict[str, str]:
@@ -22,6 +22,14 @@ class Lead(BaseModel):
             "message": self.message,
             "created_at": self.created_at.isoformat(),
         }
+
+
+class LeadExportSummary(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    rows: int
+    path: Path
+    latest_created_at: str | None
 
 
 class LeadStore:
@@ -44,15 +52,23 @@ class LeadStore:
         with self.path.open(newline="", encoding="utf-8") as file:
             return list(csv.DictReader(file))
 
+    def summary(self) -> LeadExportSummary:
+        rows = self.read_all()
+        latest = rows[-1]["created_at"] if rows else None
+        return LeadExportSummary(rows=len(rows), path=self.path, latest_created_at=latest)
+
 
 def parse_lead_command(text: str) -> Lead:
     raw = text.removeprefix("/lead").strip()
     parts = [part.strip() for part in raw.split("|")]
     if len(parts) != 3:
         raise ValueError("Use: /lead name | email | message")
-    return Lead(
-        name=parts[0],
-        email=parts[1],
-        message=parts[2],
-        created_at=datetime.now(timezone.utc),
-    )
+    try:
+        return Lead(
+            name=parts[0],
+            email=parts[1],
+            message=parts[2],
+            created_at=datetime.now(timezone.utc),
+        )
+    except ValidationError as exc:
+        raise ValueError("Lead is invalid. Check name, email, and message.") from exc

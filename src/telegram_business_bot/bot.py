@@ -49,8 +49,12 @@ async def status(message: Message) -> None:
 
 @dispatcher.message(Command("export_leads"), F.from_user.id.in_(settings.admin_ids))
 async def export_leads(message: Message) -> None:
-    rows = lead_store.read_all()
-    await message.answer(f"Lead rows available: {len(rows)}. CSV path: {settings.leads_csv_path}")
+    summary = lead_store.summary()
+    await message.answer(
+        f"Lead rows available: {summary.rows}. "
+        f"Latest lead: {summary.latest_created_at or 'none'}. "
+        f"CSV path: {summary.path}"
+    )
 
 
 async def run() -> None:
