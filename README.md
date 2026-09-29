@@ -1,6 +1,11 @@
-# Telegram Business Bot Template
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+    <img src="assets/logo-light.svg" alt="Telegram Business Bot Template" width="620">
+  </picture>
+</h1>
 
-[![CI](https://github.com/emirhuseynrmx/telegram-business-bot-template/actions/workflows/ci.yml/badge.svg)](https://github.com/emirhuseynrmx/telegram-business-bot-template/actions)
+[![CI](https://github.com/emirhuseynrmx/telegram-business-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/emirhuseynrmx/telegram-business-bot/actions)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 
 Telegram bot template for lead capture, FAQs, alerts, and small-business automation.
